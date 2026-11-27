@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text Translator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; background-color: #f9f9f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        .row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .col { flex: 1; display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #555; }
+        select, textarea { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        textarea { height: 120px; resize: vertical; }
+        button { width: 100%; padding: 12px; background-color: #1a73e8; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #1557b0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Text Translator</h2>
+    
+    <div class="row">
+        <div class="col">
+            <label>Input Language</label>
+            <select id="inputLang">
+                <option value="English">English</option>
+                <option value="Malay">Malay</option>
+            </select>
+        </div>
+        <div class="col">
+            <label>Output Language</label>
+            <select id="outputLang">
+                <option value="Malay">Malay</option>
+                <option value="English">English</option>
+                <option value="German">German</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <label>Enter text to translate</label>
+            <textarea id="inputText">I like programming.</textarea>
+        </div>
+        <div class="col">
+            <label>Translation</label>
+            <textarea id="outputText" readonly></textarea>
+        </div>
+    </div>
+
+    <button onclick="handleTranslate()">TRANSLATE</button>
+</div>
+
+<script>
+async function handleTranslate() {
+    const input_language = document.getElementById("inputLang").value;
+    const output_language = document.getElementById("outputLang").value;
+    const text_input = document.getElementById("inputText").value;
+    const outputField = document.getElementById("outputText");
+
+    outputField.value = "Translating...";
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/translate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ input_language, output_language, text_input })
+        });
+
+        const data = await response.json();
+        outputField.value = data.translated_text;
+    } catch (error) {
+        outputField.value = "Error connecting to server.";
+        console.error(error);
+    }
+}
+</script>
+
+</body>
+</html>
